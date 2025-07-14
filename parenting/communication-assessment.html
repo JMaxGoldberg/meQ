@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillForge: Enhanced Family Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .assessment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .screen-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .question-number {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-right: 15px;
+        }
+        
+        .question-title {
+            flex: 1;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .question-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin: 8px 0 15px 0;
+            font-style: italic;
+        }
+        
+        .question-purpose {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #1976d2;
+        }
+        
+        .option-grid {
+            display: grid;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .option-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+            transform: translateY(-1px);
+        }
+        
+        .option-card.selected {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .option-icon {
+            font-size: 22px;
+        }
+        
+        .option-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .option-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .checkbox-item.selected {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-top: 2px;
+        }
+        
+        .checkbox-label {
+            flex: 1;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .checkbox-description {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        .write-in-section {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .write-in-section.expanded {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .write-in-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .write-in-input {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+            display: none;
+        }
+        
+        .write-in-input.expanded {
+            display: block;
+        }
+        
+        .child-input-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .child-input-row {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .child-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .child-number {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .remove-child-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .child-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .field-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .field-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .input-field {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .special-needs-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .special-needs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .special-needs-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f0f8ff;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s ease;
+        }
+        
+        .special-needs-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .special-needs-item.selected {
+            background: #667eea;
+            color: white;
+        }
+        
+        .add-child-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-child-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        
+        .info-box {
+            background: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #2e7d32;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .assessment-result {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .profile-section {
+            margin-bottom: 20px;
+        }
+        
+        .profile-section h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 3px;
+            display: inline-block;
+        }
+        
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 30px auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: background 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: #667eea;
+        }
+        
+        .progress-dot.completed {
+            background: #4CAF50;
+        }
+        
+        .co-parent-details {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+        
+        .co-parent-details.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .child-fields {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SkillForge Enhanced Family Assessment</h1>
+            <p>Help us understand your unique family dynamics so we can create the most relevant EQ scenarios for you</p>
+        </div>
+        
+        <div class="assessment-container">
+            <div class="screen-header">
+                <h2>Let's Get to Know Your Family</h2>
+                <p>6 questions • 10-12 minutes • Creates your personalized EQ training experience</p>
+                
+                <div class="progress-indicator">
+                    <div class="progress-dot completed"></div>
+                    <div class="progress-dot active"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">1</div>
+                        <div class="question-title">Your Natural Communication Style</div>
+                    </div>
+                    <div class="question-subtitle">When your child is upset about something, what feels most natural to you?</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> This helps us frame scenarios in a way that matches your natural communication approach, making the training feel authentic and building on your existing strengths.
+                    </div>
+                    
+                    <div class="option-grid">
+                        <div class="option-card selected" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🤝</div>
+                                <div class="option-title">Listen and understand first</div>
+                            </div>
+                            <div class="option-description">I want to hear their perspective and involve them in finding solutions together. I believe in collaborative problem-solving and valuing their input while maintaining guidance.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🛡️</div>
+                                <div class="option-title">Make sure they feel safe and supported</div>
+                            </div>
+                            <div class="option-description">I focus on providing security and clear guidance through difficult moments. I want them to feel protected while learning how to handle challenges.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🌱</div>
+                                <div class="option-title">Adapt based on the situation and child</div>
+                            </div>
+                            <div class="option-description">Different situations and different kids need different approaches. I read the room and adjust my communication style based on what's needed in the moment.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">📚</div>
+                                <div class="option-title">I'm actively learning and growing</div>
+                            </div>
+                            <div class="option-description">I'm seeking the best ways to help my children and family. I experiment with different approaches and pay attention to what's most effective for each situation.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">2</div>
+                        <div class="question-title">Family Structure & Living Situation</div>
+                    </div>
+                    <div class="question-subtitle">What best describes your family situation? (Select all that apply)</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> Family structure affects communication dynamics, authority questions, coordination needs, and the types of scenarios you encounter daily. Understanding your family setup helps us create relevant, realistic practice situations.
+                    </div>
+                    
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="checkbox-label">Single parent household</div>
+                                <div class="checkbox-description">I'm the primary caregiver most or all of the time</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Co-parenting with ex-partner</div>
+                                <div class="checkbox-description">Children split time between two households</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Two-parent household</div>
+                                <div class="checkbox-description">Both parents live in the same home together</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Blended family / Step-parent dynamic</div>
+                                <div class="checkbox-description">At least one child is not biologically related to one parent</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Extended family actively involved</div>
+                                <div class="checkbox-description">Grandparents, aunts/uncles, or other family help with daily care decisions</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Grandparents as primary caregivers</div>
+                                <div class="checkbox-description">Grandparents are raising grandchildren full-time</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Same-sex parents</div>
+                                <div class="checkbox-description">Two moms or two dads raising children together</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Adoptive or foster family</div>
+                                <div class="checkbox-description">Children joined our family through adoption or foster care</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Multi-generational household</div>
+                                <div class="checkbox-description">Three or more generations living in the same home</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Guardian or kinship care</div>
+                                <div class="checkbox-description">Caring for children who are not my biological children (relative, family friend, etc.)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="write-in-section" onclick="toggleWriteIn(this)">
+                        <div class="write-in-header">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">My family structure is different</div>
+                                <div class="checkbox-description">None of the above quite captures our family situation</div>
+                            </div>
+                        </div>
+                        <textarea class="write-in-input" placeholder="Please describe your family structure so we can create scenarios that feel relevant and authentic to your situation. Include any important dynamics or relationships that affect daily communication."></textarea>
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">3</div>
+                        <div class="question-title">Work-Life & Time Context</div>
+                    </div>
+                    <div class="question-subtitle">What's your work and caregiving situation?</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> Your time availability, energy levels, and responsibilities affect when and how communication challenges arise. This helps us create scenarios that fit your real-life context and constraints.
+                    </div>
+                    
+                    <div class="option-grid">
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🏢</div>
+                                <div class="option-title">Work full-time outside home</div>
+                            </div>
+                            <div class="option-description">Limited time with kids but want to make every moment count. Need efficient, impactful communication strategies for mornings and evenings.</div>
+                        </div>
+                        
+                        <div class="option-card selected" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🏠</div>
+                                <div class="option-title">Work from home</div>
+                            </div>
+                            <div class="option-description">Balancing work responsibilities and parenting in the same space. Need help with boundaries, interruptions, and managing competing demands.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">👶</div>
+                                <div class="option-title">Stay-at-home parent</div>
+                            </div>
+                            <div class="option-description">Home with kids full-time. Sometimes need boundaries and strategies for constant interaction, plus maintaining adult connections.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">⚖️</div>
+                                <div class="option-title">Part-time or flexible schedule</div>
+                            </div>
+                            <div class="option-description">Variable availability and changing routines. Need adaptable communication approaches that work across different schedules.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this); showCoParentDetails()">
+                            <div class="option-header">
+                                <div class="option-icon">🔄</div>
+                                <div class="option-title">Co-parenting affects my schedule</div>
+                            </div>
+                            <div class="option-description">My work and availability change based on when I have the kids vs. when they're with their other parent.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🎓</div>
+                                <div class="option-title">Student and parent</div>
+                            </div>
+                            <div class="option-description">Balancing education goals with family responsibilities. Managing study time, assignments, and parent duties simultaneously.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🔄</div>
+                                <div class="option-title">In transition</div>
+                            </div>
+                            <div class="option-description">Between jobs, changing careers, or in a major life transition that affects my availability and stress levels.</div>
+                        </div>
+                        
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🌙</div>
+                                <div class="option-title">Non-traditional work schedule</div>
+                            </div>
+                            <div class="option-description">Nights, weekends, rotating shifts, or other schedule that affects typical family routines.</div>
+                        </div>
+                    </div>
+                    
+                    <div id="coParentDetails" class="co-parent-details">
+                        <h4 style="margin-bottom: 15px; color: #667eea;">Co-Parenting Context</h4>
+                        <div class="field-group" style="margin-bottom: 15px;">
+                            <label class="field-label">How would you describe your co-parenting relationship?</label>
+                            <select class="input-field">
+                                <option>Select one...</option>
+                                <option>Collaborative - we communicate well and coordinate easily</option>
+                                <option>Functional - we manage but have some communication challenges</option>
+                                <option>Difficult - frequent disagreements about parenting decisions</option>
+                                <option>Minimal contact - we stick to logistics and schedules only</option>
+                                <option>High conflict - ongoing disputes that affect the children</option>
+                                <option>New arrangement - still figuring out how to work together</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">What's your biggest co-parenting communication challenge?</label>
+                            <textarea class="input-field" style="min-height: 60px;" placeholder="e.g., Different discipline styles, scheduling conflicts, communication about kids' needs, maintaining consistency between homes..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>💡 Why this matters:</strong> If you selected co-parenting, your scenarios will include specific practice for coordinating between households, managing transitions, and communicating about children's needs across different parenting styles.
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">4</div>
+                        <div class="question-title">Your Children & Their Individual Needs</div>
+                    </div>
+                    <div class="question-subtitle">Tell us about each of your children so we can create age-appropriate and needs-specific scenarios</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> Communication strategies that work with a 6-year-old are completely different from those needed with a teenager. Understanding each child's personality, developmental stage, and any special considerations helps us create scenarios that feel authentic to your daily life.
+                    </div>
+                    
+                    <div class="child-input-section">
+                        <div class="child-input-row">
+                            <div class="child-header">
+                                <div class="child-number">Child 1</div>
+                                <button class="remove-child-btn" onclick="removeChild(this)">Remove</button>
+                            </div>
+                            
+                            <div class="child-fields">
+                                <div class="field-group">
+                                    <label class="field-label">Age Range</label>
+                                    <select class="input-field">
+                                        <option>Select age range...</option>
+                                        <option>2-3 years (toddler)</option>
+                                        <option>4-5 years (preschool)</option>
+                                        <option>6-8 years (early elementary)</option>
+                                        <option selected>9-12 years (late elementary/middle school)</option>
+                                        <option>13-15 years (early teen)</option>
+                                        <option>16-18 years (late teen)</option>
+                                        <option>18+ years (young adult living at home)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="field-group">
+                                    <label class="field-label">Personality & Communication Style</label>
+                                    <input type="text" class="input-field" placeholder="e.g., social butterfly, anxious about school, loves routine, very direct..." value="Very social, questions everything, hates being interrupted">
+                                </div>
+                            </div>
+                            
+                            <div class="special-needs-section">
+                                <div class="field-label">Does this child have any special needs, learning differences, or considerations that affect communication? (Select all that apply)</div>
+                                <div class="info-box">
+                                    <strong>🧠 Why we include this:</strong> Neurodivergent children and those with special needs often require adapted communication approaches. Understanding these needs helps us create scenarios with realistic, supportive strategies that work for your family.
+                                </div>
+                                <div class="special-needs-grid">
+                                    <div class="special-needs-item selected" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox" checked> ADHD
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Autism Spectrum (ASD)
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Anxiety or worry
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Learning differences (dyslexia, etc.)
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Sensory processing differences
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Speech or language differences
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Physical disability or mobility needs
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Chronic illness or medical needs
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Trauma history or PTSD
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Behavioral or emotional challenges
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Giftedness or advanced abilities
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Mental health considerations
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> None of these apply
+                                    </div>
+                                </div>
+                                <textarea class="input-field" placeholder="Additional details about your child's needs, triggers, or communication preferences that would help us create better scenarios..." style="margin-top: 15px; min-height: 80px;">Diagnosed ADHD, takes medication, but still struggles with focus during homework time. Gets overwhelmed in noisy environments. Responds well to visual schedules and advance warning about transitions. Very creative and loves when I acknowledge his ideas.</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="child-input-row">
+                            <div class="child-header">
+                                <div class="child-number">Child 2</div>
+                                <button class="remove-child-btn" onclick="removeChild(this)">Remove</button>
+                            </div>
+                            
+                            <div class="child-fields">
+                                <div class="field-group">
+                                    <label class="field-label">Age Range</label>
+                                    <select class="input-field">
+                                        <option>Select age range...</option>
+                                        <option>2-3 years (toddler)</option>
+                                        <option>4-5 years (preschool)</option>
+                                        <option selected>6-8 years (early elementary)</option>
+                                        <option>9-12 years (late elementary/middle school)</option>
+                                        <option>13-15 years (early teen)</option>
+                                        <option>16-18 years (late teen)</option>
+                                        <option>18+ years (young adult living at home)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="field-group">
+                                    <label class="field-label">Personality & Communication Style</label>
+                                    <input type="text" class="input-field" placeholder="e.g., social butterfly, anxious about school, loves routine, very direct..." value="Sensitive, needs extra transition time, very creative, people-pleaser">
+                                </div>
+                            </div>
+                            
+                            <div class="special-needs-section">
+                                <div class="field-label">Does this child have any special needs, learning differences, or considerations that affect communication? (Select all that apply)</div>
+                                <div class="special-needs-grid">
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> ADHD
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Autism Spectrum (ASD)
+                                    </div>
+                                    <div class="special-needs-item selected" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox" checked> Anxiety or worry
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Learning differences (dyslexia, etc.)
+                                    </div>
+                                    <div class="special-needs-item selected" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox" checked> Sensory processing differences
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Speech or language differences
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Physical disability or mobility needs
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Chronic illness or medical needs
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Trauma history or PTSD
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Behavioral or emotional challenges
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Giftedness or advanced abilities
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> Mental health considerations
+                                    </div>
+                                    <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                                        <input type="checkbox"> None of these apply
+                                    </div>
+                                </div>
+                                <textarea class="input-field" placeholder="Additional details about your child's needs, triggers, or communication preferences that would help us create better scenarios..." style="margin-top: 15px; min-height: 80px;">Gets anxious about changes in routine or new situations. Very sensitive to loud noises and certain textures. Needs advance warning before transitions and responds well to calm, quiet voices. Often worries about making mistakes.</textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="add-child-btn" onclick="addChild()">+ Add Another Child</button>
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">5</div>
+                        <div class="question-title">Current Communication Challenges</div>
+                    </div>
+                    <div class="question-subtitle">What parenting communication challenges are you facing right now? (Select all that apply)</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> We'll prioritize scenarios that address your most pressing current needs first, then gradually expand to help you handle similar situations across different contexts.
+                    </div>
+                    
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="checkbox-label">Screen time negotiations and boundaries</div>
+                                <div class="checkbox-description">Battles over device limits, gaming time, social media, YouTube</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="checkbox-label">Homework and school-related stress</div>
+                                <div class="checkbox-description">Resistance to homework, academic anxiety, school avoidance, projects</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Morning and evening routine chaos</div>
+                                <div class="checkbox-description">Getting out the door, bedtime battles, transition struggles</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Teen independence vs. safety concerns</div>
+                                <div class="checkbox-description">Driving, dating, freedom boundaries, curfew negotiations</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" checked>
+                            <div>
+                                <div class="checkbox-label">Sibling conflicts and fairness issues</div>
+                                <div class="checkbox-description">Fighting, jealousy, different rules for different ages, tattling</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Emotional meltdowns and regulation</div>
+                                <div class="checkbox-description">Big feelings, tantrums, helping kids process emotions</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Social media and online safety</div>
+                                <div class="checkbox-description">Cyberbullying, inappropriate content, digital citizenship</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Friend drama and social issues</div>
+                                <div class="checkbox-description">Exclusion, peer pressure, social anxiety, friendship coaching</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Discipline and consequences</div>
+                                <div class="checkbox-description">What consequences work, follow-through, consistency</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Co-parent coordination and consistency</div>
+                                <div class="checkbox-description">Different rules between houses, communication with ex</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Identity and self-esteem support</div>
+                                <div class="checkbox-description">Body image, academic confidence, social belonging, LGBTQ+ support</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Cultural/religious value transmission</div>
+                                <div class="checkbox-description">Teaching family values, handling different beliefs, traditions</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Money and financial responsibility</div>
+                                <div class="checkbox-description">Allowance, chores, wants vs needs, teaching money skills</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Chores and household responsibilities</div>
+                                <div class="checkbox-description">Getting kids to help, age-appropriate expectations, follow-through</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Communication about difficult topics</div>
+                                <div class="checkbox-description">Sex, drugs, violence, family problems, world events</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="write-in-section" onclick="toggleWriteIn(this)">
+                        <div class="write-in-header">
+                            <input type="checkbox">
+                            <div>
+                                <div class="checkbox-label">Other specific communication challenges</div>
+                                <div class="checkbox-description">Unique situations not covered above</div>
+                            </div>
+                        </div>
+                        <textarea class="write-in-input" placeholder="Describe any specific communication challenges you're facing that aren't listed above. Include context about what makes these situations particularly difficult or important to your family."></textarea>
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">6</div>
+                        <div class="question-title">Learning Goals & Preferences</div>
+                    </div>
+                    <div class="question-subtitle">How do you prefer to learn and what are you hoping to achieve?</div>
+                    <div class="question-purpose">
+                        <strong>Why we ask:</strong> Understanding how you learn best and what you're hoping to achieve helps us design your EQ workouts to be engaging, effective, and aligned with your personal growth goals.
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px;">What's your main goal with EQ training?</h4>
+                        <div class="option-grid">
+                            <div class="option-card selected" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">💪</div>
+                                    <div class="option-title">Build confidence in difficult conversations</div>
+                                </div>
+                                <div class="option-description">I want to feel more prepared and less anxious when challenging parenting situations arise.</div>
+                            </div>
+                            
+                            <div class="option-card" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">🎯</div>
+                                    <div class="option-title">Solve specific ongoing challenges</div>
+                                </div>
+                                <div class="option-description">I have particular situations that keep coming up and I want better strategies for handling them.</div>
+                            </div>
+                            
+                            <div class="option-card" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">🌱</div>
+                                    <div class="option-title">Become a more emotionally intelligent parent overall</div>
+                                </div>
+                                <div class="option-description">I want to develop my emotional skills broadly to be the best parent I can be.</div>
+                            </div>
+                            
+                            <div class="option-card" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">🤝</div>
+                                    <div class="option-title">Strengthen family relationships and connection</div>
+                                </div>
+                                <div class="option-description">I want to improve communication and emotional bonds with each family member.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px;">How do you learn best? (Select all that apply)</h4>
+                        <div class="checkbox-grid">
+                            <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" checked>
+                                <div>
+                                    <div class="checkbox-label">Real examples and step-by-step guidance</div>
+                                    <div class="checkbox-description">Show me exactly what to say and do in specific situations</div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox">
+                                <div>
+                                    <div class="checkbox-label">Understanding the psychology behind techniques</div>
+                                    <div class="checkbox-description">Explain why certain approaches work and the science behind them</div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkbox-item selected" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" checked>
+                                <div>
+                                    <div class="checkbox-label">Quick practice with immediate feedback</div>
+                                    <div class="checkbox-description">Short exercises where I can practice and get coaching right away</div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox">
+                                <div>
+                                    <div class="checkbox-label">Connecting with other parents</div>
+                                    <div class="checkbox-description">Learning from others facing similar challenges</div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox">
+                                <div>
+                                    <div class="checkbox-label">Video demonstrations and modeling</div>
+                                    <div class="checkbox-description">Watching examples of effective communication in action</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px;">How often would you like to practice?</h4>
+                        <div class="option-grid">
+                            <div class="option-card selected" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">📅</div>
+                                    <div class="option-title">Daily bite-sized practice (3-5 minutes)</div>
+                                </div>
+                                <div class="option-description">Short, consistent workouts that fit into busy parent life</div>
+                            </div>
+                            
+                            <div class="option-card" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">📆</div>
+                                    <div class="option-title">Few times per week (10-15 minutes)</div>
+                                </div>
+                                <div class="option-description">Longer sessions when I have more focused time</div>
+                            </div>
+                            
+                            <div class="option-card" onclick="selectOption(this)">
+                                <div class="option-header">
+                                    <div class="option-icon">⚡</div>
+                                    <div class="option-title">As-needed when challenges arise</div>
+                                </div>
+                                <div class="option-description">Just-in-time help when I'm facing specific situations</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="assessment-result">
+                    <h3 style="color: #2e7d32; margin-bottom: 15px;">🎯 Your Personalized Family Communication Profile</h3>
+                    
+                    <div class="profile-section">
+                        <h4>🤝 Communication Style DNA</h4>
+                        <div class="tag">Collaborative Communicator</div>
+                        <p style="font-size: 14px; color: #1b5e20; margin-top: 8px;">You naturally involve children in problem-solving and value their input while maintaining guidance. This strength will be the foundation for all your EQ scenarios.</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>🏠 Family Context & Structure</h4>
+                        <div class="tag">Single parent</div>
+                        <div class="tag">Work from home</div>
+                        <div class="tag">Two children (9-12, 6-8)</div>
+                        <p style="font-size: 14px; color: #1b5e20; margin-top: 8px;">Your scenarios will include single-parent dynamics and work-from-home boundary challenges.</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>🧠 Individual Child Considerations</h4>
+                        <div class="tag">Child 1: ADHD support strategies</div>
+                        <div class="tag">Child 2: Anxiety + sensory accommodations</div>
+                        <p style="font-size: 14px; color: #1b5e20; margin-top: 8px;">Your scenarios will include neurodivergent-friendly communication strategies, sensory considerations, and approaches that work for both children's different needs.</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>⚡ Priority Focus Areas (Starting This Week)</h4>
+                        <div class="tag">Screen time boundary setting</div>
+                        <div class="tag">Homework stress (with ADHD considerations)</div>
+                        <div class="tag">Sibling fairness and conflict resolution</div>
+                        <p style="font-size: 14px; color: #1b5e20; margin-top: 8px;">Week 1 scenarios will focus on these immediate challenges, then expand to build comprehensive EQ skills.</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>📚 Learning Design</h4>
+                        <div class="tag">Daily 3-5 minute workouts</div>
+                        <div class="tag">Real examples + immediate practice</div>
+                        <div class="tag">Confidence-building focus</div>
+                        <p style="font-size: 14px; color: #1b5e20; margin-top: 8px;">Your EQ workouts will use collaborative approaches with concrete examples, designed for busy single parents who want to feel more confident in challenging moments.</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4>🎯 Your Personalized Training Will Include</h4>
+                        <p style="font-size: 14px; color: #1b5e20;">Collaborative communication techniques for screen time negotiations that work for a social, questioning 9-12 year old with ADHD, plus anxiety-sensitive approaches for a 6-8 year old who needs extra transition time. All scenarios designed for single-parent context with work-from-home boundaries.</p>
+                    </div>
+                </div>
+                
+                <button class="continue-btn" onclick="completeAssessment()">Start My Personalized EQ Training Journey →</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectOption(element) {
+            const container = element.closest('.option-grid, .field-group');
+            if (container) {
+                const siblings = container.querySelectorAll('.option-card');
+                siblings.forEach(card => card.classList.remove('selected'));
+            }
+            element.classList.add('selected');
+        }
+        
+        function toggleCheckbox(element) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        }
+        
+        function toggleSpecialNeed(element) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        }
+        
+        function toggleWriteIn(element) {
+            element.classList.toggle('expanded');
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            const textarea = element.querySelector('.write-in-input');
+            
+            checkbox.checked = !checkbox.checked;
+            textarea.classList.toggle('expanded');
+            
+            if (textarea.classList.contains('expanded')) {
+                setTimeout(() => textarea.focus(), 100);
+            }
+        }
+        
+        function showCoParentDetails() {
+            document.getElementById('coParentDetails').classList.add('show');
+        }
+        
+        function removeChild(button) {
+            const childRow = button.closest('.child-input-row');
+            if (document.querySelectorAll('.child-input-row').length > 1) {
+                childRow.remove();
+                updateChildNumbers();
+            } else {
+                alert('You need at least one child to create relevant scenarios.');
+            }
+        }
+        
+        function addChild() {
+            const container = document.querySelector('.child-input-section');
+            const childCount = container.querySelectorAll('.child-input-row').length;
+            
+            const newChild = createChildRow(childCount + 1);
+            container.insertBefore(newChild, container.querySelector('.add-child-btn'));
+        }
+        
+        function createChildRow(number) {
+            const div = document.createElement('div');
+            div.className = 'child-input-row';
+            div.innerHTML = `
+                <div class="child-header">
+                    <div class="child-number">Child ${number}</div>
+                    <button class="remove-child-btn" onclick="removeChild(this)">Remove</button>
+                </div>
+                
+                <div class="child-fields">
+                    <div class="field-group">
+                        <label class="field-label">Age Range</label>
+                        <select class="input-field">
+                            <option>Select age range...</option>
+                            <option>2-3 years (toddler)</option>
+                            <option>4-5 years (preschool)</option>
+                            <option>6-8 years (early elementary)</option>
+                            <option>9-12 years (late elementary/middle school)</option>
+                            <option>13-15 years (early teen)</option>
+                            <option>16-18 years (late teen)</option>
+                            <option>18+ years (young adult living at home)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Personality & Communication Style</label>
+                        <input type="text" class="input-field" placeholder="e.g., social butterfly, anxious about school, loves routine, very direct...">
+                    </div>
+                </div>
+                
+                <div class="special-needs-section">
+                    <div class="field-label">Does this child have any special needs, learning differences, or considerations that affect communication? (Select all that apply)</div>
+                    <div class="special-needs-grid">
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> ADHD
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Autism Spectrum (ASD)
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Anxiety or worry
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Learning differences (dyslexia, etc.)
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Sensory processing differences
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Speech or language differences
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Physical disability or mobility needs
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Chronic illness or medical needs
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Trauma history or PTSD
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Behavioral or emotional challenges
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Giftedness or advanced abilities
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> Mental health considerations
+                        </div>
+                        <div class="special-needs-item" onclick="toggleSpecialNeed(this)">
+                            <input type="checkbox"> None of these apply
+                        </div>
+                    </div>
+                    <textarea class="input-field" placeholder="Additional details about your child's needs, triggers, or communication preferences that would help us create better scenarios..." style="margin-top: 15px; min-height: 80px;"></textarea>
+                </div>
+            `;
+            return div;
+        }
+        
+        function updateChildNumbers() {
+            const childRows = document.querySelectorAll('.child-input-row');
+            childRows.forEach((row, index) => {
+                const numberElement = row.querySelector('.child-number');
+                numberElement.textContent = `Child ${index + 1}`;
+            });
+        }
+        
+        function completeAssessment() {
+            alert('🎉 Assessment Complete!\n\nYour personalized EQ training is ready. You\'ll receive scenarios specifically designed for:\n\n• Collaborative communication style\n• Single parent work-from-home context\n• ADHD and anxiety/sensory considerations\n• Screen time, homework, and sibling challenges\n\nStarting your first personalized scenario now!');
+        }
+    </script>
+</body>
+</html>
